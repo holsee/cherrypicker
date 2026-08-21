@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v7
 
       # Toolchain setup, caching, build, and cherry.check in one step.
-      - uses: holsee/cherry/action@v0.2.0
+      - uses: holsee/cherry/action@v0.3.0
         with:
           source: site
 
