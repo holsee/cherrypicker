@@ -16,7 +16,7 @@ defmodule Cherrypicker.MixProject do
       docs: [
         main: "readme",
         logo: "assets/logo-exdoc.png",
-        extras: ["README.md", "DESIGN.md"],
+        extras: ["README.md", "DESIGN.md", "CHANGELOG.md"],
         source_ref: "v#{@version}"
       ],
       source_url: @repo,

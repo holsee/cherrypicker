@@ -2,12 +2,26 @@
   <img src="https://raw.githubusercontent.com/holsee/cherrypicker/main/assets/cherrypicker-640.png" alt="The cherrypicker logo: a cherry driving a cherry picker" width="420">
 </p>
 
-# cherrypicker
+<p align="center">
+  <strong>Stable named <code>.localhost</code> URLs for local dev servers.</strong><br>
+  For humans and agents, on the BEAM — no Node, no npm, no root CA.
+</p>
 
-[![CI](https://github.com/holsee/cherrypicker/actions/workflows/ci.yml/badge.svg)](https://github.com/holsee/cherrypicker/actions/workflows/ci.yml)
-[![Licence: MIT or Apache-2.0](https://img.shields.io/badge/licence-MIT%20or%20Apache--2.0-blue.svg)](#licence)
+<p align="center">
+  <a href="https://hex.pm/packages/cherrypicker"><img src="https://img.shields.io/hexpm/v/cherrypicker.svg" alt="Hex version"></a>
+  <a href="https://hexdocs.pm/cherrypicker"><img src="https://img.shields.io/badge/hex-docs-8e7ce6.svg" alt="Hex docs"></a>
+  <a href="https://github.com/holsee/cherrypicker/actions/workflows/ci.yml"><img src="https://github.com/holsee/cherrypicker/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <a href="#licence"><img src="https://img.shields.io/badge/licence-MIT%20or%20Apache--2.0-blue.svg" alt="Licence: MIT or Apache-2.0"></a>
+</p>
 
-**Stable named `.localhost` URLs for local dev servers. For humans and agents, on the BEAM.**
+<p align="center">
+  <a href="https://holsee.github.io/cherrypicker/">Website</a> ·
+  <a href="https://holsee.github.io/cherrypicker/api/">API reference</a> ·
+  <a href="https://github.com/holsee/cherrypicker/blob/main/DESIGN.md">Design</a> ·
+  <a href="CHANGELOG.md">Changelog</a>
+</p>
+
+---
 
 Port numbers wander between runs and read like noise (`localhost:5173` means
 nothing). Names do not. cherrypicker is a tiny loopback reverse proxy: tell it
@@ -25,10 +39,6 @@ http://docs.localhost
 
 `*.localhost` already resolves to loopback on Windows, macOS, and systemd
 Linux — no DNS setup, no hosts-file edits, no root certificate, no Node.
-
-**Website:** [holsee.github.io/cherrypicker](https://holsee.github.io/cherrypicker/) ·
-**Full API reference:** [holsee.github.io/cherrypicker/api](https://holsee.github.io/cherrypicker/api/) ·
-**Design:** [DESIGN.md](DESIGN.md)
 
 ## Install
 
@@ -51,7 +61,7 @@ the escript and add the dependency (see [From Elixir](#from-elixir)).
 ### Agent skill
 
 The repo ships an agent skill
-([`skills/cherrypicker/SKILL.md`](skills/cherrypicker/SKILL.md)) that teaches
+([`skills/cherrypicker/SKILL.md`](https://github.com/holsee/cherrypicker/blob/main/skills/cherrypicker/SKILL.md)) that teaches
 coding agents the daemon lifecycle, the register model, and the `--json`
 envelopes:
 
