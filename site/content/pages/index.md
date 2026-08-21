@@ -7,7 +7,7 @@ description: Stable named .localhost URLs for local dev servers, on the BEAM.
 <img class="hero-mark" src="brand/cherrypicker.png" alt="The cherrypicker logo: a cherry driving a cherry picker" width="320" height="320">
 <h1>Names for<br>your <em>ports</em></h1>
 <p class="hero-tagline">Stable named <code>.localhost</code> URLs for local dev servers, on the BEAM. No DNS setup, no hosts-file edits, no root certificate and no Node.</p>
-<p class="hero-actions"><a class="button" href="api/">API reference</a> <a class="button button-ghost" href="https://github.com/holsee/cherrypicker">GitHub</a> <a class="button button-ghost" href="https://github.com/holsee/cherrypicker/blob/main/DESIGN.md">Design</a></p>
+<p class="hero-actions"><a class="button" href="api/">API reference</a> <a class="button button-ghost" href="https://github.com/holsee/cherrypicker">GitHub</a></p>
 <div class="cmd" data-copy><span class="cmd-os">escript</span><code>mix escript.install hex cherrypicker</code></div>
 <div class="cmd" data-copy><span class="cmd-os">mix.exs, client only</span><code>{:cherrypicker, "~> 0.1"}</code></div>
 </section>
