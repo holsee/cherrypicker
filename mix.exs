@@ -13,7 +13,12 @@ defmodule Cherrypicker.MixProject do
       deps: deps(),
       escript: [main_module: Cherrypicker.CLI],
       package: package(),
-      docs: [main: "readme", extras: ["README.md", "DESIGN.md"]],
+      docs: [
+        main: "readme",
+        logo: "assets/logo-exdoc.png",
+        extras: ["README.md", "DESIGN.md"],
+        source_ref: "v#{@version}"
+      ],
       source_url: @repo,
       description:
         "Stable named .localhost URLs for local dev servers. " <>
@@ -53,7 +58,10 @@ defmodule Cherrypicker.MixProject do
   defp package do
     [
       licenses: ["MIT", "Apache-2.0"],
-      links: %{"GitHub" => @repo}
+      links: %{
+        "GitHub" => @repo,
+        "Website" => "https://holsee.github.io/cherrypicker/"
+      }
     ]
   end
 end
