@@ -1,0 +1,45 @@
+# Deploys site/ to GitHub Pages (holsee.github.io/cherrypicker).
+# Same shape `mix cherry.gen.action` generates, with the site living in
+# a subdirectory of the library repo.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Toolchain setup, caching, build, and cherry.check in one step.
+      - uses: holsee/cherry/action@v0.2.0
+        with:
+          source: site
+
+      - run: touch site/_site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site/_site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
