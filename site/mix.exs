@@ -17,7 +17,9 @@ defmodule CherrypickerSite.MixProject do
 
   defp deps do
     [
-      {:cherry, "~> 0.2.0"}
+      # Pinned past hex 0.2.0 for the dep-site overlay fix (cherry#86);
+      # return to {:cherry, "~> 0.2.1"} at the next cherry release.
+      {:cherry, github: "holsee/cherry", ref: "36bf79c"}
     ]
   end
 end

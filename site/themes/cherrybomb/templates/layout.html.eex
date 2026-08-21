@@ -1,0 +1,74 @@
+<%!-- cherry:eject theme=cherrybomb version=0.1.0 sha256=d1d200440e383d716a5e42c760022e875b78b0d4b2af16ab56815f56737f4407 --%>
+<% import Cherry.Theme.Helpers %><!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= h(@page_title) %> · <%= h(@site.title) %></title>
+<%!-- Layered so the theme's own drawer/mark styling outranks it: an
+     unlayered vendor stylesheet would beat everything in @layer theme. --%><%= @head_extra %><%= if @search == "pagefind" do %><style>@import url("<%= href(@site, "pagefind/pagefind-ui.css") %>") layer(pagefind);</style>
+<% end %><link rel="stylesheet" href="<%= href(@site, "assets/site.css") %>">
+<script>
+/* No-flash: apply the stored theme before first paint. */
+(function () {
+  try {
+    var t = localStorage.getItem("cherry-theme");
+    if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+  } catch (e) {}
+})();
+</script>
+</head>
+<body class="<%= @page_class %>">
+<header class="site-header">
+<div class="wrap">
+<a class="site-title" href="<%= href(@site, "") %>"><%= h(@site.title) %></a>
+<%!-- No posts here yet: hide the built-in Blog entry until one exists. --%><nav class="site-nav"><%= for item <- @nav, item.label != "Blog" do %><a href="<%= item.href %>"><%= h(item.label) %></a>
+<% end %>
+<button class="theme-toggle" type="button" aria-label="Theme">
+<svg data-theme-icon="auto" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M8 2 A6 6 0 0 1 8 14 Z" fill="currentColor" stroke="none"/></svg>
+<svg data-theme-icon="light" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="display:none"><circle cx="8" cy="8" r="3.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M13 3l-1.4 1.4M4.4 11.6L3 13"/></svg>
+<svg data-theme-icon="dark" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" style="display:none"><path d="M13.5 9.5A6 6 0 1 1 6.5 2.5a5 5 0 0 0 7 7Z"/></svg>
+<span data-theme-label>auto</span>
+</button>
+<%= if @search == "pagefind" do %><div id="search" class="site-search"></div>
+<% end %><%= if @search == "cherry" do %><div class="site-search" data-search="<%= href(@site, "search/index.json") %>">
+<input type="search" class="site-search-input" placeholder="Search" aria-label="Search this site" autocomplete="off" spellcheck="false">
+<div class="site-search-results" data-search-results aria-live="polite"></div>
+</div>
+<% end %></nav>
+</div>
+</header>
+<main>
+<div class="wrap">
+<%= @inner %>
+</div>
+</main>
+<footer class="site-footer">
+<div class="wrap">
+<span><%= h(@site.title) %> by <a href="https://x.com/holsee" rel="me">@holsee</a></span>
+<a href="<%= href(@site, "feed.xml") %>">RSS</a>
+</div>
+</footer>
+<%= if @search == "pagefind" do %><script src="<%= href(@site, "pagefind/pagefind-ui.js") %>"></script>
+<script>
+window.addEventListener("DOMContentLoaded", function () {
+  new PagefindUI({ element: "#search", showImages: false });
+  var input = document.querySelector("#search input");
+  if (!input) return;
+  var mac = /Mac|iP/.test(navigator.platform || "");
+  input.setAttribute("placeholder", "Search (" + (mac ? "⌘" : "Ctrl+") + "K)");
+  window.addEventListener("keydown", function (e) {
+    if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) {
+      e.preventDefault();
+      input.focus();
+      input.select();
+    }
+  });
+});
+</script>
+<% end %><%= if @search == "cherry" do %><script src="<%= href(@site, "search/search.js") %>" defer></script>
+<% end %><script src="<%= href(@site, "assets/theme-toggle.js") %>" defer></script>
+<script src="<%= href(@site, "assets/copy-code.js") %>" defer></script>
+<script src="<%= href(@site, "assets/video-embed.js") %>" defer></script>
+</body>
+</html>
