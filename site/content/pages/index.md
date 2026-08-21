@@ -1,5 +1,5 @@
 ---
-title: cherrypicker
+title: Home
 description: Stable named .localhost URLs for local dev servers, on the BEAM.
 ---
 
