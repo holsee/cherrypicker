@@ -3,7 +3,9 @@
 All notable changes to cherrypicker are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); versioning follows SemVer.
 
-## [Unreleased]
+## [0.1.0] — 2026-08-21
+
+First release on [Hex](https://hex.pm/packages/cherrypicker).
 
 ### Added
 - The daemon: Bandit listener with Host-header routing, ETS route registry,

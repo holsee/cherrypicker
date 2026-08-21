@@ -42,13 +42,13 @@ Linux — no DNS setup, no hosts-file edits, no root certificate, no Node.
 
 ## Install
 
-From Hex (0.1.0 ships shortly):
+From Hex:
 
 ```sh
 mix escript.install hex cherrypicker
 ```
 
-From source, today:
+Or straight from source:
 
 ```sh
 mix escript.install github holsee/cherrypicker
@@ -137,8 +137,7 @@ CLI, proxy, and HTTP control-API contract.
 
 ## From Elixir
 
-Add the client to any BEAM app (0.1.0 on Hex shortly; the GitHub dep works
-today):
+Add the client to any BEAM app:
 
 ```elixir
 {:cherrypicker, "~> 0.1"}
