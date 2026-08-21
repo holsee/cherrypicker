@@ -5,6 +5,7 @@
 # cherrypicker
 
 [![CI](https://github.com/holsee/cherrypicker/actions/workflows/ci.yml/badge.svg)](https://github.com/holsee/cherrypicker/actions/workflows/ci.yml)
+[![Licence: MIT or Apache-2.0](https://img.shields.io/badge/licence-MIT%20or%20Apache--2.0-blue.svg)](#licence)
 
 **Stable named `.localhost` URLs for local dev servers. For humans and agents, on the BEAM.**
 
