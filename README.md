@@ -47,6 +47,17 @@ Both install the `cherrypicker` binary into `~/.mix/escripts` — make sure
 that directory is on your `PATH`. To use only the Elixir client library, skip
 the escript and add the dependency (see [From Elixir](#from-elixir)).
 
+### Agent skill
+
+The repo ships an agent skill
+([`skills/cherrypicker/SKILL.md`](skills/cherrypicker/SKILL.md)) that teaches
+coding agents the daemon lifecycle, the register model, and the `--json`
+envelopes:
+
+```sh
+gh skill install holsee/cherrypicker
+```
+
 ## The daemon
 
 Everything routes through one long-running process:
