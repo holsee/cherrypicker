@@ -3,6 +3,14 @@
 All notable changes to cherrypicker are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); versioning follows SemVer.
 
+## [Unreleased]
+
+### Added
+- Built-in help: bare `cherrypicker`, `cherrypicker help`, and `--help`/`-h`
+  print the usage screen (every verb, its arguments, the `--json` flag, and
+  the exit codes) to stdout and exit 0. Bare `cherrypicker` previously
+  exited 2 with "a verb is required". (#TBD)
+
 ## [0.1.1] — 2026-08-22
 
 ### Fixed

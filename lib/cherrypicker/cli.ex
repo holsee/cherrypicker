@@ -9,7 +9,24 @@ defmodule Cherrypicker.CLI do
       cherrypicker version
 
   Every verb takes `--json` for a machine-readable envelope. Exit codes:
-  0 success, 1 the command ran and failed, 2 usage error.
+  0 success, 1 the command ran and failed, 2 usage error. Bare
+  `cherrypicker`, `cherrypicker help`, and `--help`/`-h` print the usage
+  screen and exit 0.
+  """
+
+  @help """
+  usage: cherrypicker <verb> [args] [--json]
+
+  Verbs:
+
+    start [--port N]   run the proxy in the foreground (default port 80)
+    route NAME PORT    serve 127.0.0.1:PORT at http://NAME.localhost
+    unroute NAME       remove a route
+    ls                 list routes
+    version            print the version
+
+  Every verb takes --json for a machine-readable envelope.
+  Exit codes: 0 success, 1 the command ran and failed, 2 usage error.
   """
 
   @spec main([String.t()]) :: no_return()
@@ -20,6 +37,16 @@ defmodule Cherrypicker.CLI do
   @doc "The dispatcher, separated from `main/1` so tests avoid the halt."
   @spec run([String.t()]) :: 0 | 1 | 2
   def run(argv) do
+    # Before OptionParser, which would reject --help as an unknown option.
+    if argv == [] or hd(argv) in ["help", "--help", "-h"] do
+      IO.puts(String.trim_trailing(@help))
+      0
+    else
+      dispatch(argv)
+    end
+  end
+
+  defp dispatch(argv) do
     {opts, args, invalid} =
       OptionParser.parse(argv, strict: [json: :boolean, port: :integer])
 
