@@ -3,6 +3,16 @@
 All notable changes to cherrypicker are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); versioning follows SemVer.
 
+## [Unreleased]
+
+### Fixed
+- The proxy releases abandoned idle streams: the client socket is watched in
+  `active: :once` while a monitored reader pulls from the upstream, so a
+  browser closing a silent SSE or long-poll connection frees the socket, the
+  handler process, and the upstream connection immediately. Previously all
+  three leaked forever, since a vanished client was only noticed on a failed
+  write that an idle stream never makes. (#12)
+
 ## [0.1.0] — 2026-08-21
 
 First release on [Hex](https://hex.pm/packages/cherrypicker).
