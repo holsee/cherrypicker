@@ -18,6 +18,12 @@ All notable changes to cherrypicker are documented here. Format follows
   connection. Reaping now lives in the `after` block, where every internal
   unwind passes. (#13)
 
+### Changed
+- Upstream readers run under a named `Task.Supervisor`
+  (`Cherrypicker.ReaderSupervisor`) via `async_nolink`: still monitored and
+  never linked, but now part of the daemon's tree — visible in observer and
+  gone with the tree on shutdown instead of orphaned. (#14)
+
 ## [0.1.0] — 2026-08-21
 
 First release on [Hex](https://hex.pm/packages/cherrypicker).

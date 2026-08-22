@@ -93,21 +93,21 @@ defmodule Cherrypicker.Proxy do
 
     owner = self()
 
+    # async_nolink: monitored (a crash arrives as :DOWN, not a cascade),
+    # never linked, and supervised — the reader dies with the daemon's
+    # tree instead of outliving a killed handler.
     reader =
-      spawn_monitor(fn ->
-        result =
-          Finch.stream(
-            request,
-            Cherrypicker.Finch,
-            :ok,
-            fn event, :ok ->
-              send(owner, {:upstream, event})
-              :ok
-            end,
-            receive_timeout: :infinity
-          )
-
-        send(owner, {:upstream_done, result})
+      Task.Supervisor.async_nolink(Cherrypicker.ReaderSupervisor, fn ->
+        Finch.stream(
+          request,
+          Cherrypicker.Finch,
+          :ok,
+          fn event, :ok ->
+            send(owner, {:upstream, event})
+            :ok
+          end,
+          receive_timeout: :infinity
+        )
       end)
 
     try do
@@ -123,7 +123,7 @@ defmodule Cherrypicker.Proxy do
     end
   end
 
-  defp relay(conn, {pid, ref} = reader, client, name, port) do
+  defp relay(conn, %Task{pid: pid, ref: ref} = reader, client, name, port) do
     receive do
       {:upstream, {:status, status}} ->
         relay(%{conn | status: status}, reader, client, name, port)
@@ -137,9 +137,9 @@ defmodule Cherrypicker.Proxy do
           {:error, _reason} -> halt_reader(reader, conn)
         end
 
-      # Sent by the reader after every event it will ever send; mailbox
-      # order from a single sender makes this the natural terminator.
-      {:upstream_done, result} ->
+      # The task's reply, sent after every event it will ever send;
+      # mailbox order from a single sender makes it the terminator.
+      {^ref, result} ->
         Process.demonitor(ref, [:flush])
         finish(conn, result, name, port)
 
@@ -169,9 +169,8 @@ defmodule Cherrypicker.Proxy do
     conn
   end
 
-  defp reap({pid, ref}) do
-    Process.demonitor(ref, [:flush])
-    Process.exit(pid, :kill)
+  defp reap(%Task{} = reader) do
+    Task.shutdown(reader, :brutal_kill)
   end
 
   defp finish(%Plug.Conn{state: :chunked} = conn, _result, _name, _port), do: conn
