@@ -53,6 +53,9 @@ defmodule Cherrypicker.Daemon do
     children = [
       Cherrypicker.Routes,
       {Finch, name: Cherrypicker.Finch},
+      # Owns the proxy's upstream readers: monitored, never linked, and
+      # gone with this tree instead of orphaned on daemon shutdown.
+      {Task.Supervisor, name: Cherrypicker.ReaderSupervisor},
       {Bandit,
        plug: Cherrypicker.Proxy,
        port: port,
