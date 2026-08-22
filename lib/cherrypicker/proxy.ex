@@ -113,6 +113,11 @@ defmodule Cherrypicker.Proxy do
     try do
       relay(conn, reader, client, name, port)
     after
+      # Runs on every internal unwind — Bandit's send_chunked raising on
+      # a client that died at just the wrong moment included — so no
+      # exception path can orphan the reader. Both reap calls are no-ops
+      # when the reader already finished.
+      reap(reader)
       unwatch(client)
       drain(client)
     end
@@ -159,10 +164,14 @@ defmodule Cherrypicker.Proxy do
   # Killing the reader is what releases the upstream: Finch's pool
   # monitors the process that checked the connection out and closes it
   # when that process dies.
-  defp halt_reader({pid, ref}, conn) do
+  defp halt_reader(reader, conn) do
+    reap(reader)
+    conn
+  end
+
+  defp reap({pid, ref}) do
     Process.demonitor(ref, [:flush])
     Process.exit(pid, :kill)
-    conn
   end
 
   defp finish(%Plug.Conn{state: :chunked} = conn, _result, _name, _port), do: conn
