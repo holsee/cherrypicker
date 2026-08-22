@@ -101,6 +101,48 @@ defmodule Cherrypicker.DaemonTest do
     assert body =~ "myapp → :#{ctx.upstream}"
   end
 
+  test "an abandoned idle stream releases the upstream connection", ctx do
+    # A hand-rolled upstream that sends SSE headers plus one event and
+    # then goes silent — the shape of a live-reload stream — handing the
+    # test its accepted socket so the proxy hanging up is observable.
+    parent = self()
+    {:ok, listen} = :gen_tcp.listen(0, [:binary, active: false, reuseaddr: true])
+    {:ok, upstream_port} = :inet.port(listen)
+
+    spawn_link(fn ->
+      {:ok, accepted} = :gen_tcp.accept(listen)
+      {:ok, _request} = :gen_tcp.recv(accepted, 0, 5_000)
+
+      response =
+        "HTTP/1.1 200 OK\r\ncontent-type: text/event-stream\r\n" <>
+          "transfer-encoding: chunked\r\n\r\n" <> http_chunk("data: one\n\n")
+
+      :ok = :gen_tcp.send(accepted, response)
+
+      # Nothing more will ever be sent; recv returns only when the
+      # proxy closes its side.
+      send(parent, {:upstream_closed, :gen_tcp.recv(accepted, 0, 5_000)})
+    end)
+
+    {:ok, _url} = Cherrypicker.register("idle", upstream_port)
+
+    # A raw client: open the stream, see the first event, vanish.
+    {:ok, socket} = :gen_tcp.connect(~c"127.0.0.1", ctx.proxy, [:binary, active: false])
+
+    :ok =
+      :gen_tcp.send(
+        socket,
+        "GET / HTTP/1.1\r\nhost: idle.localhost:#{ctx.proxy}\r\n\r\n"
+      )
+
+    assert recv_until(socket, "data: one") =~ "data: one"
+    :ok = :gen_tcp.close(socket)
+
+    # Before the fix this timed out: the proxy never noticed the client
+    # leave, and held its upstream pull (and both sockets) forever.
+    assert_receive {:upstream_closed, {:error, :closed}}, 5_000
+  end
+
   test "a route to a dead port answers 502, not a crash", ctx do
     {:ok, dead} = :gen_tcp.listen(0, [])
     {:ok, dead_port} = :inet.port(dead)
@@ -128,6 +170,19 @@ defmodule Cherrypicker.DaemonTest do
 
     assert :error = Cherrypicker.daemon_port()
     assert {:error, :no_daemon} = Cherrypicker.register("myapp", 4000)
+  end
+
+  defp http_chunk(data) do
+    Integer.to_string(byte_size(data), 16) <> "\r\n" <> data <> "\r\n"
+  end
+
+  defp recv_until(socket, marker, acc \\ "") do
+    if acc =~ marker do
+      acc
+    else
+      {:ok, data} = :gen_tcp.recv(socket, 0, 5_000)
+      recv_until(socket, marker, acc <> data)
+    end
   end
 
   defp get(proxy_port, host, path) do
