@@ -9,7 +9,7 @@ All notable changes to cherrypicker are documented here. Format follows
 - Built-in help: bare `cherrypicker`, `cherrypicker help`, and `--help`/`-h`
   print the usage screen (every verb, its arguments, the `--json` flag, and
   the exit codes) to stdout and exit 0. Bare `cherrypicker` previously
-  exited 2 with "a verb is required". (#TBD)
+  exited 2 with "a verb is required". (#16)
 
 ## [0.1.1] — 2026-08-22
 
