@@ -48,8 +48,16 @@ defmodule Cherrypicker.CLITest do
   end
 
   test "usage errors exit 2" do
-    assert capture_io(:stderr, fn -> assert CLI.run([]) == 2 end) =~ "verb is required"
+    assert capture_io(:stderr, fn -> assert CLI.run(["--json"]) == 2 end) =~ "verb is required"
     assert capture_io(:stderr, fn -> assert CLI.run(["route", "a", "x"]) == 2 end) =~ "integer"
     assert capture_io(:stderr, fn -> assert CLI.run(["--nope"]) == 2 end) =~ "unknown option"
+  end
+
+  test "bare, help, and --help print the usage screen and exit 0" do
+    for argv <- [[], ["help"], ["--help"], ["-h"]] do
+      out = capture_io(fn -> assert CLI.run(argv) == 0 end)
+      assert out =~ "usage: cherrypicker <verb>"
+      assert out =~ "route NAME PORT"
+    end
   end
 end
