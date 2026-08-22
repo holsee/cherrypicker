@@ -12,6 +12,11 @@ All notable changes to cherrypicker are documented here. Format follows
   handler process, and the upstream connection immediately. Previously all
   three leaked forever, since a vanished client was only noticed on a failed
   write that an idle stream never makes. (#12)
+- The reader is also reaped on every exception path: Bandit's `send_chunked`
+  raises on a client that dies at just the wrong moment, and the raise used
+  to unwind past the cleanup and orphan the reader with its upstream
+  connection. Reaping now lives in the `after` block, where every internal
+  unwind passes. (#13)
 
 ## [0.1.0] — 2026-08-21
 

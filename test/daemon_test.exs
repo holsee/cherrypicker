@@ -143,6 +143,46 @@ defmodule Cherrypicker.DaemonTest do
     assert_receive {:upstream_closed, {:error, :closed}}, 5_000
   end
 
+  test "an aborted connection (RST) releases the upstream too", ctx do
+    parent = self()
+    {:ok, listen} = :gen_tcp.listen(0, [:binary, active: false, reuseaddr: true])
+    {:ok, upstream_port} = :inet.port(listen)
+
+    spawn_link(fn ->
+      {:ok, accepted} = :gen_tcp.accept(listen)
+      {:ok, _request} = :gen_tcp.recv(accepted, 0, 5_000)
+
+      response =
+        "HTTP/1.1 200 OK\r\ncontent-type: text/event-stream\r\n" <>
+          "transfer-encoding: chunked\r\n\r\n" <> http_chunk("data: one\n\n")
+
+      :ok = :gen_tcp.send(accepted, response)
+      send(parent, {:upstream_closed, :gen_tcp.recv(accepted, 0, 5_000)})
+    end)
+
+    {:ok, _url} = Cherrypicker.register("abrupt", upstream_port)
+
+    # Linger 0 turns close into a hard RST — the impolite way browsers
+    # and crashing processes sometimes leave.
+    {:ok, socket} =
+      :gen_tcp.connect(~c"127.0.0.1", ctx.proxy, [
+        :binary,
+        active: false,
+        linger: {true, 0}
+      ])
+
+    :ok =
+      :gen_tcp.send(
+        socket,
+        "GET / HTTP/1.1\r\nhost: abrupt.localhost:#{ctx.proxy}\r\n\r\n"
+      )
+
+    assert recv_until(socket, "data: one") =~ "data: one"
+    :ok = :gen_tcp.close(socket)
+
+    assert_receive {:upstream_closed, {:error, :closed}}, 5_000
+  end
+
   test "a route to a dead port answers 502, not a crash", ctx do
     {:ok, dead} = :gen_tcp.listen(0, [])
     {:ok, dead_port} = :inet.port(dead)
