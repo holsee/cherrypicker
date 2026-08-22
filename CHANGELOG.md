@@ -3,7 +3,7 @@
 All notable changes to cherrypicker are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); versioning follows SemVer.
 
-## [Unreleased]
+## [0.1.1] — 2026-08-22
 
 ### Fixed
 - The proxy releases abandoned idle streams: the client socket is watched in

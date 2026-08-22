@@ -20,7 +20,8 @@ defmodule Cherrypicker.CLITest do
   end
 
   test "version prints and exits 0" do
-    assert capture_io(fn -> assert CLI.run(["version"]) == 0 end) =~ "cherrypicker 0.1.0"
+    vsn = Application.spec(:cherrypicker, :vsn) |> to_string()
+    assert capture_io(fn -> assert CLI.run(["version"]) == 0 end) =~ "cherrypicker #{vsn}"
   end
 
   test "route and ls against a live daemon, human and json" do

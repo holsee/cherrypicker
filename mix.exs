@@ -1,7 +1,7 @@
 defmodule Cherrypicker.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.1.1"
   @repo "https://github.com/holsee/cherrypicker"
 
   def project do
